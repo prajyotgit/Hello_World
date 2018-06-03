@@ -1,7 +1,7 @@
 package com.axisrooms.pms.config;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class LoggableDispatcherServlet extends DispatcherServlet {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -37,14 +37,15 @@ public class LoggableDispatcherServlet extends DispatcherServlet {
     }
 
     private void log(HttpServletRequest req, HttpServletResponse res) {
-        LogMessage log = new LogMessage(
-                res.getStatus(),
-                req.getMethod(),
-                req.getRequestURI() + ((req.getQueryString() != null) ? ("?" + req.getQueryString()) : ""),
-                req.getRemoteAddr(),
-                getRequestPayload(req),
-                getResponsePayload(res));
-        logger.info(log);
+        logger.info(
+            String.format("\n\n%1$-8s : %2$s \n%3$-8s : %4$s \n%5$-8s : %6$s \n%7$-8s : %8$s \n%9$-8s : %10$s \n%11$-8s : %12$s \n",
+            "STATUS"  , res.getStatus(),
+            "METHOD"  , req.getMethod(),
+            "PATH"    , req.getRequestURI() + ((req.getQueryString() != null) ? ("?" + req.getQueryString()) : ""),
+            "REQUEST" , getRequestPayload(req),
+            "RESPONSE", getResponsePayload(res),
+            "IP"      , req.getRemoteAddr())
+        );
     }
 
     private String getRequestPayload(HttpServletRequest req) {
@@ -74,35 +75,6 @@ public class LoggableDispatcherServlet extends DispatcherServlet {
         ContentCachingResponseWrapper responseWrapper =
                 WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
         responseWrapper.copyBodyToResponse();
-    }
-
-    private static class LogMessage {
-        private int httpStatus;
-        private String httpMethod;
-        private String path;
-        private String clientIp;
-        private String request;
-        private String response;
-
-        public LogMessage(int httpStatus, String httpMethod, String path, String clientIp, String request, String response) {
-            this.httpStatus = httpStatus;
-            this.httpMethod = httpMethod;
-            this.path = path;
-            this.clientIp = clientIp;
-            this.request = request;
-            this.response = response;
-        }
-
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(String.format("\n\n%-8s :  ", "STATUS")).append(httpStatus)
-                    .append(String.format("\n%-8s :  ", "METHOD")).append(httpMethod)
-                    .append(String.format("\n%-8s :  ", "PATH")).append(path)
-                    .append(String.format("\n%-8s :  ", "REQUEST")).append(request)
-                    .append(String.format("\n%-8s :  ", "RESPONSE")).append(response)
-                    .append(String.format("\n%-8s :  ", "IP")).append(clientIp).append("\n");
-            return sb.toString();
-        }
     }
 
 }

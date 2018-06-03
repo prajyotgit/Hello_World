@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <appender name="CONSOLE-TEST" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="FILE-TEST" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/home/tech/logs/pms-test.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>/home/tech/logs/pms-test-debug.%d{yyyy-MM-dd-mm}.%i.log.zip</fileNamePattern>
+            <maxFileSize>5KB</maxFileSize>
+            <maxHistory>20</maxHistory>
+            <totalSizeCap>1MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.axisrooms.pms" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE-TEST"/>
+        <appender-ref ref="FILE-TEST"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE-TEST"/>
+        <appender-ref ref="FILE-TEST"/>
+    </root>
+
+</configuration>
