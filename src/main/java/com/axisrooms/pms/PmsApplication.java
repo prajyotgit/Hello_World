@@ -1,14 +1,19 @@
 package com.axisrooms.pms;
 
+import com.axisrooms.pms.config.LoggableDispatcherServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.concurrent.Executor;
 
@@ -33,6 +38,16 @@ public class PmsApplication implements AsyncConfigurer {
         executor.setThreadNamePrefix("pms-pool-");
         executor.initialize();
         return executor;
+    }
+
+    @Bean
+    public ServletRegistrationBean dispatcherRegistration() {
+        return new ServletRegistrationBean(dispatcherServlet());
+    }
+
+    @Bean(name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)
+    public DispatcherServlet dispatcherServlet() {
+        return new LoggableDispatcherServlet();
     }
 
 }
