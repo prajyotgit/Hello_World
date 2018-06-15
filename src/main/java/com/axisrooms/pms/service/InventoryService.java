@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -20,7 +19,6 @@ public class InventoryService {
     @Autowired
     InventoryRepository inventoryRepository;
 
-    @Async
     public Inventory saveData(Map<String, String> param) {
         InventoryData data = new InventoryData(
         param.get("accesskey"),
